@@ -1,0 +1,20 @@
+# fly.toml app configuration file generated for quiet-snow-6511 on 2023-09-28T19:25:14+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "quiet-snow-6511"
+primary_region = "cdg"
+
+[build]
+
+[env]
+  PORT = "3000"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
