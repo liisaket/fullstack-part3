@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const static = require('static')
 const cors = require('cors')
+const Person = require('./models/phonebook')
 const app = express()
 
 app.use(cors())
@@ -10,6 +12,7 @@ app.use(express.json())
 
 morgan.token('body', (req, res) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :response-time ms :body'))
+
 
 let persons = [
   {
@@ -41,59 +44,63 @@ app.get('/info', (req, res) => {
     ${todayTime}`)
   })
   
-  app.get('/api/persons', (req, res) => {
-    res.json(persons)
+app.get('/api/persons', (req, res) => {
+  Person.find({}).then(result => {
+    ///console.log("phonebook:")
+    res.json(result)
+    ///console.log(`${person.name} ${person.number}`)
   })
+})
 
-  app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-    if (!person) {
-      return response.status(400).json({
-        error: 'content missing'
-      })
-    }
-    response.json(person)
-  })
+app.get('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  const person = persons.find(person => person.id === id)
+  if (!person) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+  response.json(person)
+})
 
-  app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
-    response.status(204).end()
-  })
+app.delete('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  persons = persons.filter(person => person.id !== id)
+  response.status(204).end()
+})
 
-  app.post('/api/persons', (request, response) => {
-    const body = request.body
+app.post('/api/persons', (request, response) => {
+  const body = request.body
 
-    if (!body.name) {
-      return response.status(400).json({ 
-        error: 'content missing' 
-      })
-    }
+  if (!body.name) {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
 
-    if (!body.number) {
-      return response.status(400).json({ 
-        error: 'content missing' 
-      })
-    }
+  if (!body.number) {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
 
-    if (persons.find(person => person.name === body.name)) {
-      return response.status(400).json({ 
-        error: 'name must be unique' 
-      })
-    }
+  if (persons.find(person => person.name === body.name)) {
+    return response.status(400).json({ 
+      error: 'name must be unique' 
+    })
+  }
 
-    const person = {
-      id: Math.random(),
-      name: body.name,
-      number: body.number
-    }
+  const person = {
+    id: Math.random(),
+    name: body.name,
+    number: body.number
+  }
 
-    persons = persons.concat(person)
-    response.json(person)
-  })
+  persons = persons.concat(person)
+  response.json(person)
+})
   
-  const PORT = process.env.PORT || 3001
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-  })
+const PORT = process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
