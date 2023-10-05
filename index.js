@@ -46,9 +46,11 @@ app.get('/info', (req, res) => {
   
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(result => {
-    ///console.log("phonebook:")
+    console.log("phonebook:")
+    result.forEach(person => {
+      console.log(`${person.name} ${person.number}`)
+    })
     res.json(result)
-    ///console.log(`${person.name} ${person.number}`)
   })
 })
 
