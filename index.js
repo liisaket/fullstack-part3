@@ -37,7 +37,7 @@ app.get('/info', (req, res) => {
 
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(result => {
-    console.log("phonebook:")
+    console.log('phonebook:')
     result.forEach(person => {
       console.log(`${person.name} ${person.number}`)
     })
@@ -84,7 +84,7 @@ app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
 
   Person.findByIdAndUpdate(
-    request.params.id, 
+    request.params.id,
     { name, number },
     { new: true, runValidators: true , context: 'query' })
     .then(updatedNmr => {
@@ -95,7 +95,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
-  
+
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
